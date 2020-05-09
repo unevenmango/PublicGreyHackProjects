@@ -7,5 +7,5 @@
   type 'help' for basics. 'use' a module. --> 'help' in module
 
 .note
-  localexploitation was just slapped in there so a better idea is needed altho the script works 
-  Yes i understand the script isent very helpfull for learning nor can you imagin me comfortable working with it, i got by and loved it.
+  localexploitation was just slapped in there so a better idea is needed altho the script works.
+  I understand the script isent very helpfull for learning nor can you imagin me comfortable working with it, i got by and loved it.
