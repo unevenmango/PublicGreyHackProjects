@@ -75,6 +75,7 @@ KVsave = function(m)
 		save.set_content(save.content + output)
 	end for
 end function
+
 //main
 PayloadsFile = get_shell.host_computer.File(home_dir + "/Dat")
 if not PayloadsFile then 
@@ -99,6 +100,181 @@ end function
 
 creator = ["U","n","e","v","e","n","M","a","n","g","o"]
 
+Explorer = {"explore":true}
+
+Explorer.getFiles = function()
+	List =  self.current_path.get_files + self.current_path.get_folders
+	outList = []
+	for FF in List
+		outList.push(FF)
+	end for
+	return outList
+end function
+
+Explorer.fileManipulation = function()
+	Options = ["download","Basic"]
+
+	if self.current_path.is_binary then 
+		Options.push("run")
+	else
+		if self.current_path.content then
+		
+			if self.current_path.content != "" then
+				if self.current_path.content.indexOf("!") != null or self.current_path.content.indexOf(":") != null then
+					exc = self.current_path.content.split("\n")
+					exa = exc[0].split("!")
+					if exa.len == 1 then exa = exc[0].split(":")
+					if exa[1].len == 32 then 
+						Options.push("decipher")
+					end if
+				end if
+				if self.current_path.name == "Map.conf" then Options.push("Connect")
+				Type = IdentifyDataFile(self.current_path.content)
+				if Type == "Dfile" then 
+					Options.push("parse")
+				else if Type == "Micro" then 
+					Options.push("MicroParse")
+				else if Type == "asd" then 
+					Options.push("PasswordStwper or take hash idk not made yet")
+				end if
+			Options.push("print")
+			end if
+		end if
+		
+	end if
+	//Options = Options.sort
+	opt =""
+
+	while true
+	color.print(color.PURP,"<b>Editing : "+self.current_path.name+"</b>")
+	opt = select(Options)
+	if not opt then return self.current_path.parent
+	if opt == "q" then return self.current_path.parent
+	if opt == "print" then
+		print("==========================================================\n"+self.current_path.content+"\n.........................................................."+"\n              ^^^<b>Contents Of: "+self.current_path.name+"</b>^^^")
+		user_input("enter to return")
+	else if opt == "Basic" then
+		self.fileFoo
+	else if opt == "decipher" then
+		pass = self.current_path.content.split("\n")
+		if pass.len > 1 then pass = select(pass)
+		print("Deciphering\n"+pass)
+		pass = Cypher._dec(pass)
+		if pass then 
+			color.print(color.SUCCESS,"PASSWORD: "+pass)
+		else
+			color.print(color.ERROR,"PASSWORD: "+pass)
+		end if
+	else if opt == "download" then
+		self.shell.scp_upload(self.current_path.path, "/root/Downloads",Shell)
+		if Comp.File("/root/Downloads/"+self.current_path.name) then print("File Downloaded")
+	else if opt == "Connect" then
+		Map.mapConnect(Shell,self.current_path)
+	else if opt == "parse" then
+		self.mapExplore(load(self.current_path))
+	else if opt == "run" then
+		print("<b><u>Send Command Args:</b></u>\n")
+		args = user_input(self.current_path.name + "|args: ")
+		self.shell.launch(self.current_path.path, args)
+		user_input("enter to return")
+	end if
+	end while
+end function
+
+Explorer.fileFoo = function() //BASIC FILE OPTIONS
+	BasicCommands = ["delete","rename","move"]
+	print("Basic Commands: "+ self.current_path.name)
+	if not self.current_path.is_binary then BasicCommands = BasicCommands + ["set","append"]
+	opt2 = select(BasicCommands)
+	if opt2 == "delete" then
+		print("attempting")
+		if not self.current_path.has_permission("w") then return color.print(color.ERROR,"Permission Deneyed")
+		file = self.current_path
+		self.current_path = self.current_path.parent
+		file.delete
+		print("File Deleted")
+	else if opt2 == "rename" then
+		NewName = user_input(self.current_path.name+" >> :")
+		a = self.current_path.rename(NewName)
+		if a then print("File Renamed")
+	else if opt2 == "move" then
+		path = user_input("to : /")
+		if path[0] == "/" then path = path[1:]
+		a = self.current_path.move("/"+path,self.current_path.name)
+		if a then print("File Moved to "+path)
+	else if opt2 == "append" then
+		AddLine = user_input(self.current_path.name + "++:")
+		self.current_path.set_content(self.current_path.content + AddLine)
+	else if opt2 == "set" then
+		AddLine = user_input(self.current_path.name + "--:")
+		self.current_path.set_content(AddLine)
+	end if
+end function
+Explorer.compObj = function(comp)
+	self.strPath = "/"
+	if typeof(comp) == "file" then
+		self.current_path = comp
+	else
+		self.current_path = comp.File("/")
+	end if
+	while true
+		if self.current_path.is_folder then
+			color.print(color.PURP,"<b>Parent Folder : "+self.current_path.name+"</b>")
+			opt = select(self.getFiles)
+			if opt == "q" then return
+			if opt then self.current_path = opt
+		else
+			self.current_path = self.fileManipulation
+			continue
+		end if
+		if not opt then 
+			if self.current_path.name != "/" then self.current_path = self.current_path.parent
+		end if
+	end while
+end function
+
+Explorer.autorun = function(compOrFile,shell="null")
+
+	if shell == "null" then self.shell = SHELL
+	if self.explore then
+
+		if typeof(compOrFile) == "file" then self.compObj(compOrFile)
+		if typeof(compOrFile) == "computer" then self.compObj(compOrFile)
+		if typeof(compOrFile) == "shell" then self.compObj(compOrFile.host_computer)
+		if typeof(compOrFile) == "map" then self.mapExplore(compOrFile)
+
+	end if
+end function
+
+Explorer.mapExplore = function(map)
+	current_path = map
+
+	while true
+		color.print(color.PURP,"Parsing...")
+		rr = false
+		opt = select(current_path)
+		if opt == "q" then return
+		if not opt then 
+			current_path = map
+			continue
+		else
+		n = 0
+		for c in current_path
+		n=n+1
+			if typeof(c.value) == "string" then 
+				print(color.text(color.INFO,n+". ")+c.value.replace(".*", ".\n*"))
+				rr = true
+			end if
+		end for
+		if rr then continue
+		current_path = current_path[opt]
+
+		end if
+	end while
+end function
+
+explorer = new Explorer
+
 Scanner = {"metaxploit":Lib_load("metaxploit.so")}
 
 Scanner.data = {}
@@ -119,7 +295,7 @@ Scanner.run = function()
     
 	self.router = get_router(self.ip) 
 
-	self.lan_ips = self.router.computers_lan_ip
+	self.lan_ips = self.router.devices_lan_ip
 	self.Network = {}
 	comps = self.lan_ips.len
 	MetaList={}
@@ -127,13 +303,14 @@ Scanner.run = function()
 		
 		profile.computers[lan_ip] = {} //add to profiile
 		
-		Ports = self.router.computer_ports(lan_ip)
+		Ports = self.router.device_ports(lan_ip)
 		Ports = Ports + [{"is_closed":1,"get_lan_ip":lan_ip,"port_number":0,"classID":"Port"}]
 		for Port in Ports
             metaLib = null
 			LAN = Port.get_lan_ip
 			if not self.Network.hasIndex(LAN) then self.Network[LAN] = {}
 			NUM = Port.port_number
+			if NUM == 8080 then continue
 			INFO = self.router.port_info(Port)
 			if not INFO then INFO = "null null"
 			X = "Open"
@@ -293,20 +470,19 @@ end function
 q = """"
 
 Reshandle = "if not res then exit("+q+"failed"+q+")\nshell=null\nprint("+q+"<b>Revieved: "+q+"+typeof(res))\nif typeof(res) == "+q+"computer"+q+" then search.Auto(res)\nif typeof(res) == "+q+"file"+q+" then search.Auto(res)\nif typeof(res) == "+q+"shell"+q+" then\nshell = res\nsearch.Auto(shell.host_computer)\nend if\n"
-Reshandle = Reshandle + "get_shell.host_computer.touch(home_dir,"+q+"PassOutput.txt"+q+")\npassfile = get_shell.host_computer.File(home_dir +"+q+"/PassOutput.txt"+q+")\nfor file in search.passFileList\nprint(""saveing : ""+file.name )\n"
-Reshandle = Reshandle + "passfile.set_content(passfile.content +"+q+"##################"+q+"+ file.name +"+q+"##################"+q+"+ file.content)\nprint(file.content)\n"
+Reshandle = Reshandle + "get_shell.host_computer.touch(home_dir,"+q+"PassOutput.txt"+q+")\npassfile = get_shell.host_computer.File(home_dir +"+q+"/PassOutput.txt"+q+")\nfor file in search.passList\n"
+Reshandle = Reshandle + "passfile.set_content(passfile.content + file)\nprint(file)\n"
 Reshandle = Reshandle + "end for\nif shell then\nuser_input("+q+"Recieved shell! CTRL-c to exit/ enter to Connect"+q+")\nshell.start_terminal\nelse\nprint("+q+"Unable to Obtain shell"+q+")\nend if\n"
-    //if not file.hasIndex(""content"") then continue\n
-searchfunc = "Search = {}\nSearch.passFileList = []\n"
-searchfunc = searchfunc + "Search.Auto = function(comp)\nself.passFileList = []\nif typeof(comp) == "+q+"computer"+q+" then comp = comp.File("+q+"/"+q+")\nself.current = comp\nself.current_folder = self.current\nself.searchFolder\nend function\n"
-searchfunc = searchfunc + "Search.searchFolder = function()\nfor FF in self.current.get_folders+self.current.get_files\nself.current = FF\nif self.current.is_folder then \nself.searchFolder \nend if\n"
-searchfunc = searchfunc + "if not self.current.is_binary then\nif self.current.content then\nif self.current.content.indexOf("+q+":"+q+") != null then\nself.passFileList.push(self.current)\nif self.current.name ==" +q+"passwd"+q+ "then print("+q+"etc password file found"+q+")\n"
-searchfunc = searchfunc + "end if\nend if\nend if\nend for\nend function\nsearch = new Search\n"
+
+	
+searchfunc = "Search = {}\nSearch.passList = []\nSearch.userMap = {}\nSearch.Auto = function(SCF) // SHELL    COMP   FILE\nif typeof(SCF) == ""shell"" then self.current = SCF.host_computer.File(""/"")\nif typeof(SCF) == ""computer"" then self.current = SCF.File(""/"")\nif typeof(SCF) == ""file"" then self.current = getMainFolder(SCF)\nself.current_folder = self.current\nself.searchFolder\nend function\nSearch.searchFolder = function()\nfor FF in self.current.get_folders+self.current.get_files \nself.current = FF\nif self.current.is_folder then\nself.searchFolder\ncontinue\nend if\nif not self.current.is_binary then\nif self.current.content then\nif self.current.content.indexOf("":"") != null then\npss = self.current.content.split(""\n"")\nfor line in pss \nif line.indexOf("":"") == null then continue\nif line.split("":"")[1].len == 32 then\nself.passList.push(line)\nend if\nend for\nend if\nend if\nend if\nend for\nend function\nsearch = new Search\n"
+
+
+Simplelocal = "passChg = function(m,extract)\nPas=""jumpman""\nres=l.overflow(m,extract,Pas)\nif res == 1 then print(""<b>Password change Success: ""+Pas+""</b>"")\nend function\npp=program_path\nres=null\nM=include_lib(pp[:pp.lastIndexOf(""/"")+1]+""metaxploit.so"")\nif not M then exit(""metaxploit.so is missing"")\nif params.len > 0 then\nif params[0].indexOf(""/"") != null then \nl=M.load(params[0])\nelse\nl=M.net_use(get_router.public_ip).dump_lib\nend if\nif not l then exit(""grabLib FAILED"")\nfor m in M.scan(l)\nfor line in M.scan_address(l,m).split(""\n"")\nextract = line[line.indexOf(""<b>"")+3:line.indexOf(""</b>"")]\nif extract then\nif extract.indexOf(""."") == null then \nif params[0].indexOf(""/"") != null then \nres=l.overflow(m,extract)\nif not res then \nres=l.overflow(m,extract,get_router.local_ip)\npassChg(m,extract)\nend if\nelse\nres=l.overflow(m,extract,params[0])\nend if\n\nif typeof(res) == ""file"" then search.Auto(res)\nif typeof(res) == ""shell"" then search.Auto(res.host_computer)\nif typeof(res) == ""computer"" then search.Auto(res)\nif typeof(res) == ""shell"" then\nQ=user_input(res.host_computer.current_path+"" Ready to enter?y"")\nif Q == ""y"" then res.start_terminal\nend if\nend if\nend if\nend for\nend for\nelse\nprint(""[lan_ip] or [LibPath]"")\nend if\n"
+Simplelocal = searchfunc + Simplelocal + Reshandle
 
 adjectives1 = ["The Pearl Of Justice,","Imaculate","Unreal","Inconceivable","Artistic","My Precious",color.text(color.ERROR,"RedHat"),color.text(color.INFO,"Mango Powered")]
 adjectives = adjectives1 + ["Adorable","Delightful","Homely","Quaint","Adventurous","Depressed","Horrible","Aggressive","Determined","Hungry","Real","Agreeable","Different","Hurt","Relieved","Alert","Difficult","Repulsive","Alive","Disgusted","Ill","Rich","Amused	","Distinct","Important","Sick","Angry","Disturbed","Impossible","Scary","Annoyed","Dizzy","Inexpensive","Selfish","Annoying","Doubtful","Innocent","Shiny","Arrogant","Exuberant","Lucky","Tame","Breakable","Faithful","Gorgeous"]
-Simplelocal = "passChg = function(m,extract)\nPas=""jumpman""\nres=l.overflow(m,extract,Pas)\nif res == 1 then print(""<b>Password change Success: ""+Pas+""</b>"")\nend function\npp=program_path\nres=null\nM=include_lib(pp[:pp.lastIndexOf(""/"")+1]+""metaxploit.so"")\nif not M then exit(""metaxploit.so is missing"")\nif params.len > 0 then\nif params[0].indexOf(""/"") != null then \nl=M.load(params[0])\nelse\nl=M.net_use(get_router.public_ip).dump_lib\nend if\nif not l then exit(""grabLib FAILED"")\nfor m in M.scan(l)\nfor line in M.scan_address(l,m).split(""\n"")\nextract = line[line.indexOf(""<b>"")+3:line.indexOf(""</b>"")]\nif extract then\nif extract.indexOf(""."") == null then \nif params[0].indexOf(""/"") != null then \nres=l.overflow(m,extract)\nif not res then \nres=l.overflow(m,extract,get_router.local_ip)\npassChg(m,extract)\nend if\nelse\nres=l.overflow(m,extract,params[0])\nend if\n\nif typeof(res) == ""file"" then search.Auto(res)\nif typeof(res) == ""shell"" then search.Auto(res.host_computer)\nif typeof(res) == ""computer"" then search.Auto(res)\nif typeof(res) == ""shell"" then\nQ=user_input(res.host_computer.current_path+"" Ready to enter?y"")\nif Q == ""y"" then res.start_terminal\nend if\nend if\nend if\nend for\nend for\nelse\nprint(""[lan_ip] or [LibPath]"")\nend if\n"
-Simplelocal = searchfunc + Simplelocal + Reshandle
     
 NetExploit = function()
     NOREQ = []
@@ -316,8 +492,8 @@ NetExploit = function()
             if exploit.value.req == "." then NOREQ.push({"exploit":exploit.key,"libname":libname.key})
         end for
     end for
+
     if NOREQ.len == 0 or module.var.SEL.to_int then 
-		
 		print("No "+adjectives[floor(rnd * adjectives.len)] + " Exploits found Please select your own")
 		user_input("enter")
         libname = select(scanner.data)
@@ -368,9 +544,7 @@ NetExploit = function()
         Exploit = Exploit + "net_session = metaxploit.net_use("+NU+")\nif not net_session then exit("+q+"net_session Error: Invalid ip or port"+q+")\nmetalib = net_session.dump_lib\n"
         rout = ""
         if router then rout = ", params[1]"
-
         Exploit = Exploit + "res = metalib.overflow("+q+nameList[0]+q+", "+q+nameList[1]+q+rout+")\nif params.len == 3 then res = metalib.overflow("+q+nameList[0]+q+", "+q+nameList[1]+q+rout+", params[2])\n"
-        
         Exploit = Exploit + Reshandle
         tmp = File(home_dir+"/"+name+".src")
         tmp.set_content(Exploit)
@@ -383,9 +557,7 @@ NetExploit = function()
 			print(Exploit)
 			color.print(color.ERROR,"Script FAILED to build!")
 		end if
-
     end for
-
 end function
 formatPayload = function(l, i)
 	out = null
@@ -435,7 +607,6 @@ formatselect = function(list,option) //display payloads
 	prt = ""
 	for item in list
 		i=i+1
-		
 		if typeof(item) == "file" then
             prt = prt + formatfile(item)
 		else if typeof(item) == "map" then
@@ -512,7 +683,6 @@ libpeter = function() ///pan: put exploits on one line and send to this to load
 
 end function
 
-
 mtpeter = function()
 
 	Filename = module.var.NAME
@@ -558,13 +728,16 @@ profile.ip = ""
 
 
 
-Bhelp = "varHOST = target HOST\nvarPORT = target PORT\nrun - runs module\nset - sets modules var\nvar - shows variables in module\nmodules - Displays a list of usable modules\nuse - sets current module"
+Bhelp = "varHOST = target HOST\nvarPORT = target PORT\n\nmodules - Displays a list of usable modules\nuse - sets current module\nset - sets modules var\nvar - shows variables in module\nrun - runs current module\nuser:passhash - Deciphers input\ndec [file] - decipher whole filehelp - show help for module\nexit - exit module or program"
 modules = {"base":{"func":@nah,"help":Bhelp,"var":{"HOST":"","PORT":"null"},"classID":""}}
 modules.nspeter = {"help":"Use run","var":{"SEL":"0","DEL":"1","PATH":home_dir},"req":"scanned","func":@NetExploit,"classID":"/NSpeter~> "}
 modules.scanner = {"help":"set [HOST] set (PORT) run","var":{"HOST":"","PORT":"all"},"func":@runscanner,"classID":"/Scanner~> "}
 modules.mtpeter = {"help":"","func":@mtpeter,"var":{"HOST":"","PORT":21,"USER":"root","PASS":"fiddlesticks","NAME":"Mangoscitimy.exe","PATH":"/home"},"classID":"/meterpreter~> "}
 modules.libpeter = {"help":"Just run it","var":{},"func":@libpeter,"classID":"/SimpleGenLocal~> "}
 if params.len > 0 then 
+	if params[0] == "help" or params[0] == "-h" then 
+		print(program_path[program_path.lastIndexOf("/"):] + " [preset HOST] [preset PORT]")
+	end if
 	modules.base.var.HOST = params[0]
 else if params.len > 1 then 
 	modules.base.var.HOST = params[0]
@@ -592,13 +765,11 @@ MainLoop = function()
     prefixs = program_path[1:].split("/")
 	prefix = active_user+"~$ "
 	for c in prefixs
-
 		if prefixs.indexOf(c) +1 != prefixs.len then
 			prefix = prefix + c[0].upper + "/"
 		else
 			prefix = prefix + color.text(color.CYAN,c)
 		end if
-
 	end for
     modulename = ""
     if module.len > 0 then modulename = typeof(module)
@@ -611,39 +782,80 @@ MainLoop = function()
     opt = user_input(prefix + " >" + color.text(col,modulename))
 
     opt = opt.split(" ")
-    opt.push("null")
-    if opt[0] == "modules" or opt[0] == "bbv" then print("Modules\n    "+modules.indexes.join("\n    "))
-    if opt[0].split(":").len > 1 then Cypher._dec(opt[0])
-	if opt[0] == "var" then print(module.var)
-	if opt[0] == "help" then print(module.help)
-	    if opt[0] == "set" then
-        if module.var.hasIndex(opt[1].upper) then 
-            module.var[opt[1].upper] = opt[2]
-            print("set "+ opt[1].upper+ " " + module.var[opt[1].upper])
-        end if
-    end if
-	if opt[0] == "exit" then 
+    opt = opt + ["null","null"]
+	
+    if opt[0] == "modules" or opt[0] == "bbv" then
+		print("Modules\n    "+modules.indexes.join("\n    "))
+    else if opt[0].split(":").len > 1 then 
+		if opt[0].split(":")[1].len == 32 then Cypher._dec(opt[0])
+	else if opt[0] == "var" then 
+		print(module.var)
+	else if opt[0] == "help" then 
+		print(module.help)
+	else if opt[0] == "set" then
+    	if module.var.hasIndex(opt[1].upper) then 
+    	    module.var[opt[1].upper] = opt[2]
+    	    print("set "+ opt[1].upper+ " " + module.var[opt[1].upper])
+    	end if
+	else if opt[0] == "explore" then 
+		explorer.autorun(get_shell)
+	else if opt[0] == "exit" then 
 		if typeof(module) == "" then 
 			return
 		else
 			module = modules.base
 		end if
-	end if
-    if opt[0] == "use" then
+    else if opt[0] == "use" then
         if modules.hasIndex(opt[1].lower) then 
 			modules[opt[1].lower].var = varshare(module.var,modules[opt[1].lower].var)
             module = modules[opt[1].lower]
         end if
-    end if
+	else if opt[0] == "dec" then
+		if opt[1] == "null" then opt[1] = "PassOutput.txt"
+		if opt[2] == "null" then opt[2] = "PassOutput.txt" 
+		if opt[1] == "sel" then
+			file = get_shell.host_computer.File(opt[2])
+		else
+			file = get_shell.host_computer.File(opt[1])
+		end if
 
 
-    if opt[0] == "run" then 
+		if file then
+			print("Opening : "+ file.path)
+			dec = []
+			for line in file.content.split("\n"); if dec.indexOf(line) == null then dec.push(line); end for
+			deced = []
+			if opt[1] == "sel" then
+				pass = select(dec) 
+				crack = pass.split(":")[0] + ":" + Cypher._dec(pass)
+				file.set_content(file.content.replace(pass,crack))
+			else
+				for pass in dec; deced.push(pass.split(":")[0] + ":" + Cypher._dec(pass)); end for
+				file.set_content(deced.join("\n"))
+			end if
+		else
+			color.print(color.ERROR,"File not found")
+		end if
+    else if opt[0] == "run" then 
         modulerun(module)
-    end if
-
-
-    MainLoop
+    
+	else
+		file = get_shell.host_computer.File("/bin/"+opt[0])
+		if file then 
+			get_shell.launch(file.path,opt[1:].join(" "))
+		else
+			file = get_shell.host_computer.File(home_dir+"/"+opt[0])
+			if not file then 
+				color.print(color.INFO,"LAUNCH : " + "/bin/"+opt[0])
+				color.print(color.INFO,"LAUNCH : " + home_dir + "/" +opt[0])
+			else
+				get_shell.launch(file.path,opt[1:].join(" "))
+			end if
+		end if
+	end if	
+	MainLoop
 end function
 
-MainLoop
 
+
+MainLoop
