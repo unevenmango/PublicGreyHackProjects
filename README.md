@@ -11,4 +11,5 @@
 
 .note
   localexploitation was just slapped in there so a better idea is needed altho the script works.
-  I understand the script isent very helpfull for learning nor can you imagin me comfortable working with it.
+  I understand the script isent very helpfull for learning nor can you imagin me comfortable working with it. 
+ALSO i beleive there is a bug that im neglecting to fix but wen this msg dissapears its fixed
