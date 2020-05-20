@@ -1,0 +1,339 @@
+
+
+space = function(num,txt="")
+	output = ""
+	while num > 0 + txt.len
+		output = output + " "
+		num = num - 1
+	end while
+	return output + txt
+end function
+
+Cards = {}
+Cards.suits = ["Spades","Hearts","Diamonds","Clubs"]
+Cards.Ace = {}
+Cards.Ace.func = function(id)
+	cardsOut = []
+	for suit in Cards.suits
+		card = {}
+		text = ""
+		text = text + "Top Card :_____________" + " !"
+		text = text + "Mid Card :|"+space(12, id + "_"+ suit)+"|" + " !"
+		text = text + "Mid Card :|            |" + " !"
+		text = text + "Mid Card :|            |" + " !"
+		text = text + "Mid Card :|            |" + " !"
+		text = text + "Mid Card :|            |" + " !"
+		text = text + "Mid Card :|            |" + " !"
+		text = text + "Bot Card :\------------/" + " !"
+		card.gfx = text
+		card.id = id + "_" + suit
+		cardsOut.push(card)
+	end for
+	return cardsOut
+end function
+
+Cards["2"] = {}
+Cards["2"].func = function(id)
+	cardsOut = []
+	for suit in Cards.suits
+		card = {}
+		text = ""
+		text = text + "Top Card :_____________" + " !"
+		text = text + "Mid Card :|"+space(12, id + "_"+ suit)+"|" + " !"
+		text = text + "Mid Card :|            |" + " !"
+		text = text + "Mid Card :|            |" + " !"
+		text = text + "Mid Card :|            |" + " !"
+		text = text + "Mid Card :|            |" + " !"
+		text = text + "Mid Card :|            |" + " !"
+		text = text + "Bot Card :\------------/" + " !"
+		card.gfx = text
+		
+		card.id = id + "_" + suit
+		cardsOut.push(card)
+	end for
+	return cardsOut
+end function
+
+Cards["3"] = {}
+Cards["3"].func = function(id)
+	cardsOut = []
+	for suit in Cards.suits
+		card = {}
+		text = ""
+		text = text + "Top Card :_____________" + " !"
+		text = text + "Mid Card :|"+space(12, id + "_"+ suit)+"|" + " !"
+		text = text + "Mid Card :|            |" + " !"
+		text = text + "Mid Card :|            |" + " !"
+		text = text + "Mid Card :|            |" + " !"
+		text = text + "Mid Card :|            |" + " !"
+		text = text + "Mid Card :|            |" + " !"
+		text = text + "Bot Card :\------------/" + " !"
+		card.gfx = text
+		card.id = id + "_" + suit
+		cardsOut.push(card)
+	end for
+	return cardsOut
+end function
+
+Cards["4"] = {}
+Cards["4"].func = function(id)
+	cardsOut = []
+	for suit in Cards.suits
+		card = {}
+		text = ""
+		text = text + "Top Card :_____________" + " !"
+		text = text + "Mid Card :|"+space(12, id + "_"+ suit)+"|" + " !"
+		text = text + "Mid Card :|            |" + " !"
+		text = text + "Mid Card :|            |" + " !"
+		text = text + "Mid Card :|            |" + " !"
+		text = text + "Mid Card :|            |" + " !"
+		text = text + "Mid Card :|            |" + " !"
+		text = text + "Bot Card :\------------/" + " !"
+		card.gfx = text
+		card.id = id + "_" + suit
+		cardsOut.push(card)
+	end for
+	return cardsOut
+end function
+
+Cards["5"] = {}
+Cards["5"].func = function(id)
+	cardsOut = []
+	for suit in Cards.suits
+		card = {}
+		text = ""
+		text = text + "Top Card :_____________" + " !"
+		text = text + "Mid Card :|"+space(12, id + "_"+ suit)+"|" + " !"
+		text = text + "Mid Card :|            |" + " !"
+		text = text + "Mid Card :|            |" + " !"
+		text = text + "Mid Card :|            |" + " !"
+		text = text + "Mid Card :|            |" + " !"
+		text = text + "Mid Card :|            |" + " !"
+		text = text + "Bot Card :\------------/" + " !"
+		card.gfx = text
+		card.id = id + "_" + suit
+		cardsOut.push(card)
+	end for
+	return cardsOut
+end function
+
+Cards["6"] = {}
+Cards["6"].func = function(id)
+	cardsOut = []
+	for suit in Cards.suits
+		card = {}
+		text = ""
+		text = text + "Top Card :_____________" + " !"
+		text = text + "Mid Card :|"+space(12, id + "_"+ suit)+"|" + " !"
+		text = text + "Mid Card :|            |" + " !"
+		text = text + "Mid Card :|            |" + " !"
+		text = text + "Mid Card :|            |" + " !"
+		text = text + "Mid Card :|            |" + " !"
+		text = text + "Mid Card :|            |" + " !"
+		text = text + "Bot Card :\------------/" + " !"
+		card.gfx = text
+		card.id = id + "_" + suit
+		cardsOut.push(card)
+	end for
+	return cardsOut
+end function
+
+Cards["7"] = {}
+Cards["7"].func = function(id)
+	cardsOut = []
+	for suit in Cards.suits
+		card = {}
+		text = ""
+		text = text + "Top Card :_____________" + " !"
+		text = text + "Mid Card :|"+space(12, id + "_"+ suit)+"|" + " !"
+		text = text + "Mid Card :|            |" + " !"
+		text = text + "Mid Card :|            |" + " !"
+		text = text + "Mid Card :|            |" + " !"
+		text = text + "Mid Card :|            |" + " !"
+		text = text + "Mid Card :|            |" + " !"
+		text = text + "Bot Card :\------------/" + " !"
+		card.gfx = text
+		card.id = id + "_" + suit
+		cardsOut.push(card)
+	end for
+	return cardsOut
+end function
+
+Cards["8"] = {}
+Cards["8"].func = function(id)
+	cardsOut = []
+	for suit in Cards.suits
+		card = {}
+		text = ""
+		text = text + "Top Card :_____________" + " !"
+		text = text + "Mid Card :|"+space(12, id + "_"+ suit)+"|" + " !"
+		text = text + "Mid Card :|            |" + " !"
+		text = text + "Mid Card :|            |" + " !"
+		text = text + "Mid Card :|            |" + " !"
+		text = text + "Mid Card :|            |" + " !"
+		text = text + "Mid Card :|            |" + " !"
+		text = text + "Bot Card :\------------/" + " !"
+		card.gfx = text
+		card.id = id + "_" + suit
+		cardsOut.push(card)
+	end for
+	return cardsOut
+end function
+
+Cards["9"] = {}
+Cards["9"].func = function(id)
+	cardsOut = []
+	for suit in Cards.suits
+		card = {}
+		text = ""
+		text = text + "Top Card :_____________" + " !"
+		text = text + "Mid Card :|"+space(12, id + "_"+ suit)+"|" + " !"
+		text = text + "Mid Card :|            |" + " !"
+		text = text + "Mid Card :|            |" + " !"
+		text = text + "Mid Card :|            |" + " !"
+		text = text + "Mid Card :|            |" + " !"
+		text = text + "Mid Card :|            |" + " !"
+		text = text + "Bot Card :\------------/" + " !"
+		card.gfx = text
+		card.id = id + "_" + suit
+		cardsOut.push(card)
+	end for
+	return cardsOut
+end function
+
+Cards["10"] = {}
+Cards["10"].func = function(id)
+	cardsOut = []
+	for suit in Cards.suits
+		card = {}
+		text = ""
+		text = text + "Top Card :_____________" + " !"
+		text = text + "Mid Card :|"+space(12, id + "_"+ suit)+"|" + " !"
+		text = text + "Mid Card :|            |" + " !"
+		text = text + "Mid Card :|            |" + " !"
+		text = text + "Mid Card :|            |" + " !"
+		text = text + "Mid Card :|            |" + " !"
+		text = text + "Mid Card :|            |" + " !"
+		text = text + "Bot Card :\------------/" + " !"
+		card.gfx = text
+		card.id = id + "_" + suit
+		cardsOut.push(card)
+	end for
+	return cardsOut
+end function
+
+Cards.Jack = {}
+Cards.Jack.func = function(id)
+	cardsOut = []
+	for suit in Cards.suits
+		card = {}
+		text = ""
+		text = text + "Top Card :_____________" + " !"
+		text = text + "Mid Card :|"+space(12, id + "_"+ suit)+"|" + " !"
+		text = text + "Mid Card :|            |" + " !"
+		text = text + "Mid Card :|            |" + " !"
+		text = text + "Mid Card :|            |" + " !"
+		text = text + "Mid Card :|            |" + " !"
+		text = text + "Mid Card :|            |" + " !"
+		text = text + "Bot Card :\------------/" + " !"
+		card.gfx = text
+		card.id = id + "_" + suit
+		cardsOut.push(card)
+	end for
+	return cardsOut
+end function
+
+Cards.Queen = {}
+Cards.Queen.func = function(id)
+	cardsOut = []
+	for suit in Cards.suits
+		card = {}
+		text = ""
+		text = text + "Top Card :_____________" + " !"
+		text = text + "Mid Card :|"+space(12, id + "_"+ suit)+"|" + " !"
+		text = text + "Mid Card :|            |" + " !"
+		text = text + "Mid Card :|            |" + " !"
+		text = text + "Mid Card :|            |" + " !"
+		text = text + "Mid Card :|            |" + " !"
+		text = text + "Mid Card :|            |" + " !"
+		text = text + "Bot Card :\------------/" + " !"
+		card.gfx = text
+		card.id = id + "_" + suit
+		cardsOut.push(card)
+	end for
+	return cardsOut
+end function
+
+Cards.King = {}
+Cards.King.func = function(id)
+	cardsOut = []
+	for suit in Cards.suits
+		card = {}
+		text = ""
+		text = text + "Top Card :_____________" + " !"
+		text = text + "Mid Card :|"+space(12, id + "_"+ suit)+"|" + " !"
+		text = text + "Mid Card :|            |" + " !"
+		text = text + "Mid Card :|            |" + " !"
+		text = text + "Mid Card :|            |" + " !"
+		text = text + "Mid Card :|            |" + " !"
+		text = text + "Mid Card :|            |" + " !"
+		text = text + "Bot Card :\------------/" + " !"
+		card.gfx = text
+		card.id = id + "_" + suit
+		cardsOut.push(card)
+	end for
+	return cardsOut
+end function
+
+GenDeck = function()
+	Gencards = []
+	id = 0
+	for genedCards in Cards
+		if genedCards.key != "suits" then Gencards = Gencards + Cards[genedCards.key].func(id)
+		id = id + 1
+	end for
+	return Gencards
+end function
+
+Cards_Horizontal = function(cards)
+	if cards.len > 4 then return Cards_Verticle(cards)
+	Outtext = ["","","","","","","","","",""]
+	for card in cards
+		i = 0
+		for line in card.gfx.split("!")
+			Outtext[i] = Outtext[i] + line
+			i=i+1
+		end for
+	end for
+	return Outtext.join("\n")
+end function
+
+Cards_Verticle = function(cards)
+	Outtext = ""
+	for card in cards
+		Outtext = Outtext + card.gfx.replace("!","\n")
+	end for
+	return Outtext
+end function
+
+Deck = GenDeck
+
+//List of 52 Cards
+hand = []
+Deck.shuffle
+hand.push(Deck.pop) //draw a card
+hand.push(Deck.pop)
+hand.push(Deck.pop)
+
+//Identifying cards:
+print(hand[0].id) // cardtype_cardsuit
+print(hand[0].replace("!", "\n")) //Printing single
+print(Deck.len)
+print(Cards_Horizontal(hand)) //printing list
+print(Cards_Verticle(hand))   //printing list
+
+
+
+
+
+
